@@ -1,0 +1,126 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  username     String        @unique
+  email        String        @unique
+  password     String
+  comments     Comment[]
+  person       Person?
+  ownRecipes   Recipe[]      @relation("Author")
+  savedRecipes SavedRecipe[]
+   articles Article[]
+}
+
+model Recipe {
+  id                String             @id @default(uuid())
+  title             String
+  content           String
+  images            RecipeImage[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  author            User               @relation("Author", fields: [authorId], references: [id])
+  authorId          String
+  comments          Comment[]
+  articles          Article[]
+  hashtags          Hashtag[]
+  category          Category?          @relation(fields: [categoryName], references: [name])
+  categoryName      String?
+  ingredientRecords IngredientRecord[]
+  savedByUsers      SavedRecipe[]
+}
+
+model Article {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  userId    String      // Foreign key referencing User model
+  recipeId  String      // Foreign key referencing Recipe model
+
+  user    User    @relation(fields: [userId], references: [id])
+  recipe  Recipe  @relation(fields: [recipeId], references: [id])
+}
+model SavedRecipe {
+  id       String @id @default(uuid())
+  userId   String
+  recipeId String
+  user     User   @relation(fields: [userId], references: [id])
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+
+  @@unique([userId, recipeId])
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  recipes   Recipe[]
+}
+
+model IngredientRecord {
+  id             String     @id @default(uuid())
+  quantity       String
+  unit           String
+  ingredientName String
+  recipeId       String
+  ingredient     Ingredient @relation(fields: [ingredientName], references: [name])
+  recipe         Recipe     @relation(fields: [recipeId], references: [id])
+}
+
+model Ingredient {
+  id               String             @id @default(uuid())
+  name             String             @unique
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  IngredientRecord IngredientRecord[]
+}
+
+model RecipeImage {
+  id        String   @id @default(uuid())
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  recipeId  String
+  Recipe    Recipe[]
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+  recipeId  String
+}
+
+model Hashtag {
+  id      String   @id @default(uuid())
+  name    String
+  recipes Recipe[]
+}
+
+model Person {
+  id String @id @default(uuid())
+
+  name          String
+  contactNumber String
+
+  dateOfBirth    DateTime
+  profilePicture String?
+  bio            String?
+  address        String?
+  User           User     @relation(fields: [userId], references: [id])
+  userId         String   @unique
+}

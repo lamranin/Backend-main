@@ -16,15 +16,22 @@ export const articleService = {
         data: {
           title,
           content,
-          userId,
-          recipeId
-          
+          user: {
+            connect: {
+              id:userId
+            }
+          },
+          recipe: {
+            connect: {
+              id: recipeId
+            }
+          }
         }
       });
 
       return article;
     } catch (error) {
-      console.error("Failed to create article from the service side:", error);
+      console.error("Failed to create article:", error);
       return Error("Error occurred while creating article");
     }
   },
@@ -34,5 +41,19 @@ export const articleService = {
     include: { recipe: true },
   });
   return articles;
+},
+getAllArticles: async () => {
+  try {
+    // Fetch all articles from the database
+    const articles = await databaseClient.article.findMany({
+      include: {
+        recipe: true, // Assuming there is a relation with a recipe
+      }
+    });
+    return articles;
+  } catch (error) {
+    console.error("Failed to retrieve articles:", error);
+    throw new Error("Error occurred while fetching articles");
+  }
 }
 };

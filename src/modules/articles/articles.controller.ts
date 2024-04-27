@@ -33,3 +33,15 @@ export const getArticlesByUserId = async (req: Request<{}, {}, {}, GetArticles>,
   }
 };
 
+export const getAllArticles = async (req: Request<{}, {}, {}>,
+  res: Response) => {
+  
+  try {
+    
+    const articles = await articleService.getAllArticles();
+    return res.status(200).json({articles});
+  } catch (error) {
+    return handleLibraryError(error, res);
+  }
+};
+

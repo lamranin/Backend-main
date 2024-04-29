@@ -21,11 +21,7 @@ export const articleService = {
               id:userId
             }
           },
-          recipe: {
-            connect: {
-              id: recipeId
-            }
-          }
+          recipeId
         }
       });
 
@@ -38,7 +34,7 @@ export const articleService = {
   getArticlesByUserId: async (userId: string) => {
   const articles = await databaseClient.article.findMany({
     where: { userId },
-    include: { recipe: true },
+    
   });
   return articles;
 },
@@ -46,9 +42,7 @@ getAllArticles: async () => {
   try {
     // Fetch all articles from the database
     const articles = await databaseClient.article.findMany({
-      include: {
-        recipe: true, // Assuming there is a relation with a recipe
-      }
+      
     });
     return articles;
   } catch (error) {

@@ -30,7 +30,7 @@ model Recipe {
   author            User               @relation("Author", fields: [authorId], references: [id])
   authorId          String
   comments          Comment[]
-  articles          Article[]
+ 
   hashtags          Hashtag[]
   category          Category?          @relation(fields: [categoryName], references: [name])
   categoryName      String?
@@ -47,7 +47,7 @@ model Article {
   recipeId  String      // Foreign key referencing Recipe model
 
   user    User    @relation(fields: [userId], references: [id])
-  recipe  Recipe  @relation(fields: [recipeId], references: [id])
+  
 }
 model SavedRecipe {
   id       String @id @default(uuid())

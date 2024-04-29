@@ -6,6 +6,32 @@ export const recipeService = {
     return hashTags;
   },
 
+  deleteRecipe: async (recipeId: string) => {
+    try {
+      // Start a transaction to ensure all deletions are performed atomically
+      await databaseClient.$transaction(async (prisma) => {
+        // Delete related ingredient records
+        await prisma.ingredientRecord.deleteMany({
+          where: { recipeId: recipeId }
+        });
+  
+        // Delete related recipe images
+        await prisma.recipeImage.deleteMany({
+          where: { recipeId: recipeId }
+        });
+  
+        
+        await prisma.recipe.delete({
+          where: { id: recipeId }
+        });
+      });
+  
+      return { message: "Recipe deleted successfully" };
+    } catch (error) {
+      console.error("Failed to delete recipe:", error);
+      throw new Error("Error occurred while deleting recipe");
+    }
+  },
   createRecipe: async (
     
     title: string,

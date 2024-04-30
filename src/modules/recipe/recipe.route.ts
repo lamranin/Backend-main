@@ -22,6 +22,11 @@ recipeRouter.get(
   validate(recipeSchema.getRecipeById),
   recipeController.getRecipeById
 );
+recipeRouter.delete('/recipes/:recipeId', 
+  deserialize,
+  authenticate,
+  validate(recipeSchema.deleteRecipeParams),
+  recipeController.deleteRecipe);
 
 recipeRouter.get(
   "/getPaginatedRecipes",

@@ -79,7 +79,14 @@ export const recipeSchema = {
       categoryName: z.string()
     })
   }),
-
+  
+  deleteRecipeParams: z.object({
+    query: z.object({
+      recipeId: z.string()
+     
+    })
+  }),
+  
   addCommentToRecipe: z.object({
     body: z.object({
       data: z.object({
@@ -160,6 +167,10 @@ export type getRecipesByCategory = z.infer<
 export type getRecipesByAuthor = z.infer<
   typeof recipeSchema.getRecipesByAuthor
 >["query"];
+
+export type deleteRecipeParams = z.infer<
+  typeof recipeSchema.deleteRecipeParams
+  >["query"];
 
 export type getRecipesBySavedUser = z.infer<
   typeof recipeSchema.getRecipesBySavedUser

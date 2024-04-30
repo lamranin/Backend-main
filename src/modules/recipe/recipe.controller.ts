@@ -12,6 +12,7 @@ import {
   getTotalRecipeCountByCategory,
   getComplexSearch,
   getRecipeDetailsExternal,
+  deleteRecipeParams,
   createTypeOrIngredient,
   saveRecipe,
   addCommentToRecipe,
@@ -203,6 +204,24 @@ export const recipeController = {
     }
   },
 
+  deleteRecipe: async (req: Request<{}, {}, {}, deleteRecipeParams>,
+    res: Response) => {
+    try {
+      // Validate the request parameters
+      const params = req.query;
+      const result = await recipeService.deleteRecipe(params.recipeId);
+      res.status(200).json(result);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ZodError") {
+        return res.status(400).json({ error: error.message });
+      }
+      console.error("Server Error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  },
+  
+  
+  
   complexSearch: async (
     req: Request<{}, {}, {}, getComplexSearch>,
     res: Response
